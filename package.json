@@ -1,0 +1,33 @@
+{
+  "name": "job_portal_backend",
+  "version": "1.0.0",
+  "description": "Figma/UI = JobBoard job marketplace.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faisalbari193/job_portal_backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "bugs": {
+    "url": "https://github.com/faisalbari193/job_portal_backend/issues"
+  },
+  "homepage": "https://github.com/faisalbari193/job_portal_backend#readme",
+  "dependencies": {
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "mongoose": "^9.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
