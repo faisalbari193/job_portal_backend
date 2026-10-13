@@ -11,13 +11,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please enter your email"],
       unique: true,
-      lowercase: true,
-      trim: true,
-      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email"],
+      // lowercase: true,
+      // trim: true,
+      // match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email"],
     },
 
     password: {
       type: String,
+      trim: true,
       required: [true, "Please enter your password"],
       minlength: [8, "Password must be at least 8 characters"],
       match: [
@@ -40,6 +41,9 @@ const userSchema = new mongoose.Schema(
     },
     otp: {
       type: String,
+    },
+    otpExpiresAt: {
+      type: Date,
     },
   },
   {

@@ -148,6 +148,10 @@ Stripe
 
 Use optional tools only when feature requires them.
 
+## Email setup
+
+Add `SMTP_USER` and `SMTP_PASS` to `.env`. User registration sends a UUID verification code to the provided email address; the code expires after five minutes.
+
 ---
 
 # 3. Backend Architecture
