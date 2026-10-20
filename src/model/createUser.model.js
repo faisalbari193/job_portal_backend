@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/,
         "Password must contain uppercase, lowercase, number and special character",
       ],
+      select: false, // Exclude password field from query results by default
     },
 
     isActive: {
@@ -42,7 +43,7 @@ const userSchema = new mongoose.Schema(
     otp: {
       type: String,
     },
-    otpExpiresAt: {
+    otpExpires: {
       type: Date,
     },
   },
