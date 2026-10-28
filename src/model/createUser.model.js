@@ -11,9 +11,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please enter your email"],
       unique: true,
-      // lowercase: true,
-      // trim: true,
-      // match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email"],
+      lowercase: true,
+      trim: true,
     },
 
     password: {
@@ -31,6 +30,10 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
     role: {
       type: String,
