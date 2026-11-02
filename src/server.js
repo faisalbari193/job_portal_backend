@@ -1,8 +1,10 @@
 require("dotenv").config();
-
+const otpCleanup = require("./cron/otpCleanup");
 const app = require("./app");
 const connectDB = require("./config/db");
 const PORT = process.env.PORT || 8080;
+
+otpCleanup();
 
 async function startServer() {
   try {

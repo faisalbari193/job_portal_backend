@@ -8,22 +8,83 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function sendOtpEmail(email, name, otp) {
+const sendOtpEmail = async (email, name, otp, type = "signup") => {
   try {
-    const info = await transporter.sendMail({
+    const isResend = type === "resend";
+
+    await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: email,
-      subject: "Verify Your Email",
-      text: `Hello ${name}, your verification code is ${otp}.`,
-      html: `<div style="font-family:Arial,sans-serif;max-width:500px;margin:auto;padding:20px;color:#333"><h2 style="color:#2563eb">Verify Your Email</h2><p>Hello ${name},</p><p>Thank you for creating an account. Use the verification code below to verify your email address.</p><h1 style="background:#f1f5f9;color:#2563eb;text-align:center;padding:15px;font-size:18px;overflow-wrap:anywhere">${otp}</h1><p>This code expires in 5 minutes. Please do not share it with anyone.</p><p>Regards,<br><strong>Job Board Team</strong></p></div>`,
+
+      subject: isResend ? "Your New OTP" : "Verify Your Email",
+
+      html: `
+        <div style="font-family:Arial;padding:20px">
+          <h2>${isResend ? "New Verification Code" : "Welcome to Job Board!"}</h2>
+
+          <p>Hello ${name},</p>
+
+          <p>
+            ${
+              isResend
+                ? "Here is your new OTP."
+                : "Thank you for creating an account. Please verify your email."
+            }
+          </p>
+
+          <h1 style="color:#2563eb">${otp}</h1>
+
+          <p>This OTP expires in 5 minutes.</p>
+
+          <p>Do not share your OTP with anyone.</p>
+
+          <p>Regards,<br>Job Board Team</p>
+        </div>
+      `,
     });
 
-    console.log("Message sent: %s", info.messageId);
     return true;
-  } catch (err) {
-    console.error("Error while sending mail:", err);
+  } catch (error) {
+    console.log("Email sending failed:", error.message);
     return false;
   }
-}
+};
+const sendResetPasswordEmail = async (email, name, resetUrl) => {
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: "Reset Your Password",
+      html: `
+        <div style="font-family:Arial;padding:20px">
+          <h2>Password Reset Request</h2>
 
-module.exports = { sendOtpEmail };
+          <p>Hello ${name},</p>
+
+          <p>Click the button below to reset your password.</p>
+
+          <a href="${resetUrl}"
+             style="background:#2563eb;color:white;padding:12px 20px;
+             text-decoration:none;border-radius:5px;display:inline-block">
+             Reset Password
+          </a>
+
+          <p>This link expires in 15 minutes.</p>
+
+          <p>If you did not request this, ignore this email.</p>
+        </div>
+      `,
+    });
+
+    return true;
+  } catch (error) {
+    console.log("Reset email failed:", error.message);
+    return false;
+  }
+};
+
+module.exports = {
+  sendOtpEmail,
+  sendResetPasswordEmail,
+};
+module.exports = { sendOtpEmail, sendResetPasswordEmail };
