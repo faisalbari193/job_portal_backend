@@ -1,5 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("./auth");
+const banner = require("./banner");
+const brand = require("./brand");
+const step = require("./step");
 router.use("/auth", auth);
+router.use("/banner", banner);
+router.use("/brand", brand);
+router.use("/step", step);
 module.exports = router;
