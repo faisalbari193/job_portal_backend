@@ -1,6 +1,6 @@
 const asyncHandler = require("../utils/asyncHandler");
 const bcrypt = require("bcrypt");
-const User = require("../model/user.model");
+const User = require("../model/createUser.model");
 const sendEmail = require("../helper/sendEmail");
 const apiResponse = require("../utils/apiResponse");
 const { v4: uuidv4 } = require("uuid");
