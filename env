@@ -1,0 +1,5 @@
+PORT=8080
+MONGO_URI=mongodb+srv://top-secret:VhNbfU5GCHUFyPHX@cluster0.74xiheq.mongodb.net/
+SMTP_USER=amcr24789@gmail.com
+SMTP_PASS=mxhzvddjknjufrwe
+JWT_SECRET=top-secret
