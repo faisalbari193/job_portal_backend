@@ -1,3 +1,5 @@
+const asyncHandler = require("../utils/asyncHandler");
+
 exports.brandController = asyncHandler(async (req, res) => {
   const { brandName, brandImage } = req.body;
   const newBrand = new Brand({

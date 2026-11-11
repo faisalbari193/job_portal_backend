@@ -1,3 +1,5 @@
+const asyncHandler = require("../utils/asyncHandler");
+
 exports.bannerController = asyncHandler(async (req, res) => {
   const { bannerTitle, bannerImage } = req.body;
   const newBanner = new Banner({

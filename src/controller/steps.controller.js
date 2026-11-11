@@ -1,3 +1,5 @@
+const asyncHandler = require("../utils/asyncHandler");
+
 exports.stepController=asyncHandler(async (req, res) => {
-  const { stepName, stepImage } = req.body;
+  res.send("Step controller is working");
 })
