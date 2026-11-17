@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 
 //sign up controller
 exports.signUpController = asyncHandler(async (req, res) => {
-  let { name, email, password } = req.body;
+  const { name, email, password } = req.body;
 
   if (!email) {
     return apiResponse(res, 400, "Email is required");
@@ -16,37 +16,20 @@ exports.signUpController = asyncHandler(async (req, res) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     return apiResponse(res, 400, "User already exists");
-  } else {
-    bcrypt.hash(password, 10, async (err, hash) => {
-      if (err) {
-        return apiResponse(res, 500, err || "Internal server error");
-      } else {
-        const otp = uuidv4().toString().substring(0, 4);
-        let user = new User({
-          name,
-          email,
-          password: hash,
-          otp: otp,
-          otpExpiry: Date.now() + 10 * 60 * 1000, // OTP expires in 10 minutes
-        });
-        await user.save();
-        await sendEmail(email, otp, name, "sign-up otp");
-        setTimeout(
-          async () => {
-            user.otp = null;
-            user.otpExpiry = null;
-            await user.save();
-          },
-          10 * 60 * 1000,
-        ); // Clear OTP after 10 minutes
-        return apiResponse(
-          res,
-          200,
-          "User registered successfully. Please check your email for the OTP.",
-        );
-      }
-    });
   }
+
+  const hash = await bcrypt.hash(password, 10);
+  const otp = uuidv4().toString().substring(0, 4);
+  const user = new User({
+    name,
+    email,
+    password: hash,
+    otp,
+    otpExpires: Date.now() + 10 * 60 * 1000,
+  });
+  await user.save();
+  await sendEmail(email, otp, name, "sign-up otp");
+  return apiResponse(res, 201, "OTP sent");
 });
 //verify otp controller
 exports.verifyOtpController = asyncHandler(async (req, res) => {
@@ -62,9 +45,9 @@ exports.verifyOtpController = asyncHandler(async (req, res) => {
     return apiResponse(res, 400, "User already verified");
   }
   if (existingUser.otp == otp) {
-    if (existingUser.otpExpiry > new Date()) {
+    if (existingUser.otpExpires > new Date()) {
       existingUser.otp = null;
-      existingUser.otpExpiry = null;
+      existingUser.otpExpires = null;
       existingUser.isVerified = true;
       await existingUser.save();
       return apiResponse(res, 200, "User verified successfully");
@@ -80,7 +63,7 @@ exports.resendOtpController = asyncHandler(async (req, res) => {
   if (!existingUser) {
     return apiResponse(res, 400, "User not found");
   } else {
-    if (existingUser.otpExpiry > new Date()) {
+    if (existingUser.otpExpires > new Date()) {
       return apiResponse(
         res,
         429,
@@ -89,7 +72,7 @@ exports.resendOtpController = asyncHandler(async (req, res) => {
     } else {
       const otp = uuidv4().toString().substring(0, 4);
       existingUser.otp = otp;
-      existingUser.otpExpiry = Date.now() + 10 * 60 * 1000; // OTP expires in 10 minutes
+      existingUser.otpExpires = Date.now() + 10 * 60 * 1000; // OTP expires in 10 minutes
       await existingUser.save();
       await sendEmail(email, otp, existingUser.name, "resend otp");
       return apiResponse(
@@ -141,7 +124,7 @@ exports.forgotPasswordController = asyncHandler(async (req, res) => {
   if (existingUser) {
     const otp = uuidv4().toString().substring(0, 4);
     existingUser.otp = otp;
-    existingUser.otpExpiry = Date.now() + 10 * 60 * 1000;
+    existingUser.otpExpires = Date.now() + 10 * 60 * 1000;
     await existingUser.save();
     await sendEmail(email, otp, existingUser.name, "forgot password otp");
     return apiResponse(res, 200, "OTP sent to your email for password reset");
@@ -152,11 +135,11 @@ exports.resetPasswordController = asyncHandler(async (req, res) => {
   let existingUser = await User.findOne({ email });
   if (existingUser) {
     if (existingUser.otp == otp) {
-      if (existingUser.otpExpiry > new Date()) {
+      if (existingUser.otpExpires > new Date()) {
         const hashedPassword = await bcrypt.hash(password, 10);
         existingUser.password = hashedPassword;
         existingUser.otp = null;
-        existingUser.otpExpiry = null;
+        existingUser.otpExpires = null;
         await existingUser.save();
         return apiResponse(res, 200, "Password reset successfully");
       } else {
